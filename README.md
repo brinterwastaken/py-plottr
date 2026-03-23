@@ -20,7 +20,7 @@ And here's a screenshot of the plot of `sin(x)` :
 
 ## Smoothing
 
-When y values are spaced far apart, the graph looks discontinuous between far-spaced points, to fill these gaps use the `smooth` parameter. Here are some before and after screenshots:
+When y values are spaced far apart, the graph looks discontinuous between far-spaced points. To fill these gaps use the `smooth` parameter. Here are some before and after screenshots:
 
 
 | Before   | After    |
@@ -28,3 +28,4 @@ When y values are spaced far apart, the graph looks discontinuous between far-sp
 | <img width="500" alt="image" src="https://github.com/user-attachments/assets/688d0282-eddf-415a-a1e7-9709972afbfc" /> | <img width="500" alt="image" src="https://github.com/user-attachments/assets/3e9cac45-1e2c-40be-99e0-6aabca63e5a8" /> |
 | <img width="500" alt="image" src="https://github.com/user-attachments/assets/99481f0f-a375-4f63-8d66-7b7c65eecae2" /> | <img width="500" alt="image" src="https://github.com/user-attachments/assets/9779c748-cda4-4ac4-8e08-19ad1c817c40" /> |
 
+*The smooth value used for the above examples is `0.5`*
