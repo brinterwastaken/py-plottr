@@ -15,11 +15,12 @@ def braille(matrix):
 
     return chr(0x2800+braille_char)
 
-def pointmatrix(func:function, xmin, xmax, ymin, ymax, res, smooth):
+def pointmatrix(func:function, xmin, xmax, ymin, ymax, res, smooth, axes):
+    showx, showy = 'x' in axes, 'y' in axes
+
     def func_satisfied(r,c):
         y,x = ymax - r*res, c*res + xmin
-        return y == np.round(func(x)/res)*res
-    
+        return showx & (y==0) | showy & (x==0) | (y == np.round(func(x)/res)*res)
     
     x = np.arange(xmin, xmax, res)
     y = func(x)
@@ -28,7 +29,7 @@ def pointmatrix(func:function, xmin, xmax, ymin, ymax, res, smooth):
 
     def func_satisfied_smooth(r,c):
         y,x = ymax - r*res, c*res + xmin
-        return np.logical_and(
+        return showx & (y==0) | showy & (x==0) | np.logical_and(
             np.round(func(x)/res) * res - smooth * np.abs(dy_dx[c]) < y,
             y < np.round(func(x)/res) * res + smooth * np.abs(dy_dx[c])
         )
@@ -67,8 +68,18 @@ def display_braille(filename, to_file=False, *args):
             f.write(string)
         print("Written output to file: ", filename)
 
-def plot(f:function, xmin=-10, xmax=10, ymin=-10, ymax=10, res=1/16, to_file=False, filename="plot.txt", smooth=0):
-    display_braille(filename, to_file, f, xmin, xmax, ymin, ymax, res, smooth)
+'''
+f: Function to plot (use np.sin, etc instead of math.sin)
+xxmin, xmax, ymin, ymax: Range of the graph
+res: Resolution of the graph - value of step between each x and y integer value
+to_file: Whether to store output to a file or not
+filename: Filename to store output
+smooth: Smoothening factor - the value multiplied with derivative to get a range of y values that satisfy the function around a point
+axes: Which axes to show - 'x', 'y' or 'xy'
+'''
+
+def plot(f:function, xmin=-10, xmax=10, ymin=-10, ymax=10, res=1/16, to_file=False, filename="plot.txt", smooth=0, axes=''):
+    display_braille(filename, to_file, f, xmin, xmax, ymin, ymax, res, smooth, axes)
 
 if __name__ == "__main__":
-    plot(lambda x: 1/100*(4-x)*(x+3)*(x+5)*(x-3)*(x-4), ymin=-15,ymax=15, smooth=0.5)
+    plot(lambda x: 5 * np.sin(x), ymin=-10,ymax=10, res=1/8, smooth=0.5, axes='xy')
