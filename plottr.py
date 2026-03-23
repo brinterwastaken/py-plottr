@@ -15,12 +15,26 @@ def braille(matrix):
 
     return chr(0x2800+braille_char)
 
-def pointmatrix(func:function, xmin, xmax, ymin, ymax, res):
+def pointmatrix(func:function, xmin, xmax, ymin, ymax, res, smooth):
     def func_satisfied(r,c):
         y,x = ymax - r*res, c*res + xmin
         return y == np.round(func(x)/res)*res
+    
+    
+    x = np.arange(xmin, xmax, res)
+    y = func(x)
+    if smooth != 0:
+        dy_dx = np.gradient(y)
 
-    return np.fromfunction(func_satisfied, (int((ymax-ymin)//res), int((xmax-xmin)//res)), dtype=int)
+    def func_satisfied_smooth(r,c):
+        y,x = ymax - r*res, c*res + xmin
+        return np.logical_and(np.round(func(x)/res)*res - smooth * np.abs(dy_dx[c]) < y,y < np.round(func(x)/res)*res + smooth * np.abs(dy_dx[c]))
+
+    if smooth !=0:
+        return np.fromfunction(func_satisfied_smooth, (int((ymax-ymin)//res), int((xmax-xmin)//res)), dtype=int)
+
+    else:
+        return np.fromfunction(func_satisfied, (int((ymax-ymin)//res), int((xmax-xmin)//res)), dtype=int)
 
 def display_full(*args):
     points:np.ndarray = pointmatrix(*args)
@@ -49,8 +63,8 @@ def display_braille(filename, to_file=False, *args):
             f.write(string)
         print("Written output to file: ", filename)
 
-def plot(f:function, xmin=-10, xmax=10, ymin=-10, ymax=10, res=1/32, to_file=False, filename="plot.txt"):
-    display_braille(filename, to_file, f, xmin, xmax, ymin, ymax, res)
+def plot(f:function, xmin=-10, xmax=10, ymin=-10, ymax=10, res=1/16, to_file=False, filename="plot.txt", smooth=0):
+    display_braille(filename, to_file, f, xmin, xmax, ymin, ymax, res, smooth)
 
-plot(np.sin, to_file=True, ymin=-2,ymax=2)
-
+if __name__ == "__main__":
+    plot(lambda x: 1/100*(4-x)*(x+3)*(x+5)*(x-3)*(x-4), ymin=-15,ymax=15, smooth=0.5)
