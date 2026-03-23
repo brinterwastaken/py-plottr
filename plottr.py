@@ -28,13 +28,17 @@ def pointmatrix(func:function, xmin, xmax, ymin, ymax, res, smooth):
 
     def func_satisfied_smooth(r,c):
         y,x = ymax - r*res, c*res + xmin
-        return np.logical_and(np.round(func(x)/res)*res - smooth * np.abs(dy_dx[c]) < y,y < np.round(func(x)/res)*res + smooth * np.abs(dy_dx[c]))
+        return np.logical_and(
+            np.round(func(x)/res) * res - smooth * np.abs(dy_dx[c]) < y,
+            y < np.round(func(x)/res) * res + smooth * np.abs(dy_dx[c])
+        )
+    
+    rows, columns = int((ymax-ymin)//res), int((xmax-xmin)//res)
 
     if smooth !=0:
-        return np.fromfunction(func_satisfied_smooth, (int((ymax-ymin)//res), int((xmax-xmin)//res)), dtype=int)
-
+        return np.fromfunction(func_satisfied_smooth, (rows, columns), dtype=int)
     else:
-        return np.fromfunction(func_satisfied, (int((ymax-ymin)//res), int((xmax-xmin)//res)), dtype=int)
+        return np.fromfunction(func_satisfied, (rows, columns), dtype=int)
 
 def display_full(*args):
     points:np.ndarray = pointmatrix(*args)
